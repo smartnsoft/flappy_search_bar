@@ -21,7 +21,11 @@ To use this plugin, add flappy_search_bar as a dependency in your pubspec.yaml f
               Post("Suggestion 1 titre", "Suggestion 1 body"),
               Post("Suggestion 2 titre", "Suggestion 2 body")
             ],
+            searchBarController: _searchBarController,
             minimumChars: 3,
+            searchBarStyle: SearchBarStyle(
+              borderRadius: BorderRadius.all(Radius.circular(10.0))
+            ),
             debounceDuration: Duration(milliseconds: 400),
             loader: Text("loading"),
             onError: (Error error) => Text("ERREUR"),
@@ -41,6 +45,27 @@ To use this plugin, add flappy_search_bar as a dependency in your pubspec.yaml f
                 subtitle: Text(post.body),
               );
             },
+            header: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: <Widget>[
+                RaisedButton(
+                  child: Text("Sort"),
+                  onPressed: changeSort,
+                ),
+                RaisedButton(
+                  child: Text("Rm Sort"),
+                  onPressed: removeSort,
+                ),
+                RaisedButton(
+                  child: Text("Filter"),
+                  onPressed: filter,
+                ),
+                RaisedButton(
+                  child: Text("Rm Filter"),
+                  onPressed: removeFilter,
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -55,6 +80,8 @@ To use this plugin, add flappy_search_bar as a dependency in your pubspec.yaml f
 | onSearch   | Future<List<T>> Function(String text) | Callback giving you the text to look for and asking for a Future  | yes  | - |
 | onItemFound| Widget Function(T item, int index) | Callback letting you build the widget corresponding to each item| yes| - |
 | suggestions  |  List<T> | Potential fist list of suggestions (when no request have been made)  | no| [] |
+| searchBarController  |  SearchBarController | Enable you to sort and filter your list  | no | default controller |
+| searchBarStyle  |  SearchBarStyle | Syle to customize SearchBar  | no | default values on bottom tab |
 | buildSuggestions| Widget Function(T item, int index) | Callback called to let you build Suggestion item (if not provided, the suggestion will have the same layout as the basic item)  | no| null|
 | minimumChars  |  int | Minimum number of chars to start querying  | no| 3 |
 | onError  |  Function(Error error) | Callback called when an error occur runnning Future | no| null |
@@ -68,7 +95,13 @@ To use this plugin, add flappy_search_bar as a dependency in your pubspec.yaml f
 | textStyle  | TextSTyle | TextStyle of searched text | no| TextStyle(color: Colors.black) |
 | cancellationText  | Text | Text shown on right of the SearchBar | no| Text("Cancel") |
 
+### SearchBar default SearchBarStyle
 
+| Name  | Type | default Value |
+| ------------- | ------------- | ------------- |
+| backgroundColor  | Color  | Color.fromRGBO(142, 142, 147, .15)  |
+| padding  | EdgeInsetsGeometry  | EdgeInsets.all(5.0)  |
+| borderRadius  | BorderRadius  | BorderRadius.all(Radius.circular(5.0))})  |
 
 
 
