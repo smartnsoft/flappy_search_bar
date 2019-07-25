@@ -8,6 +8,8 @@ import 'search_bar_style.dart';
 
 mixin _ControllerListener<T> on State<SearchBar<T>> {
   void onListChanged(List<T> items) {}
+
+  void onError(Error error) {}
 }
 
 class SearchBarController<T> {
@@ -22,10 +24,17 @@ class SearchBarController<T> {
   }
 
   void _search(String text, Future<List<T>> Function(String text) onSearch) async {
-    final List<T> items = await onSearch(text);
-    _list.clear();
-    _list.addAll(items);
-    _controllerListener?.onListChanged(_list);
+    try {
+      final List<T> items = await onSearch(text);
+      _list.clear();
+      _filteredList.clear();
+      _sortedList.clear();
+      _lastSorting = null;
+      _list.addAll(items);
+      _controllerListener?.onListChanged(_list);
+    } catch (error) {
+      _controllerListener?.onError(error);
+    }
   }
 
   void removeFilter() {
@@ -38,7 +47,6 @@ class SearchBarController<T> {
       _sortedList.sort(_lastSorting);
       _controllerListener?.onListChanged(_sortedList);
     }
-
   }
 
   void removeSort() {
@@ -90,7 +98,7 @@ class SearchBar<T> extends StatefulWidget {
     this.searchBarController,
     this.minimumChars = 3,
     this.debounceDuration = const Duration(milliseconds: 500),
-    this.loader = const CircularProgressIndicator(),
+    this.loader = const Center(child: CircularProgressIndicator()),
     this.onError,
     this.emptyWidget = const SizedBox.shrink(),
     this.header,
@@ -117,15 +125,13 @@ class _SearchBarState<T> extends State<SearchBar<T>> with TickerProviderStateMix
   Timer _debounce;
   bool _animate = false;
   List<T> _list = [];
+  SearchBarController searchBarController;
 
   @override
   void initState() {
     super.initState();
-    if (widget.searchBarController == null) {
-      widget.searchBarController = SearchBarController<T>();
-    }
-
-    widget.searchBarController.setListener(this);
+    searchBarController = widget.searchBarController ?? SearchBarController<T>();
+    searchBarController.setListener(this);
   }
 
   @override
@@ -133,6 +139,14 @@ class _SearchBarState<T> extends State<SearchBar<T>> with TickerProviderStateMix
     setState(() {
       _loading = false;
       _list = items;
+    });
+  }
+
+  @override
+  void onError(Error error) {
+    setState(() {
+      _loading = false;
+      _error = widget.onError != null ? widget.onError(error) : Text("error");
     });
   }
 
@@ -149,14 +163,7 @@ class _SearchBarState<T> extends State<SearchBar<T>> with TickerProviderStateMix
           _animate = true;
         });
         if (widget.onSearch != null) {
-          try {
-            widget.searchBarController._search(newText, widget.onSearch);
-          } catch (error) {
-            setState(() {
-              _loading = false;
-              _error = widget.onError != null ? widget.onError(error) : Text("error");
-            });
-          }
+          searchBarController._search(newText, widget.onSearch);
         }
       } else {
         setState(() {
