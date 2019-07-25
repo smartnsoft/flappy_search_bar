@@ -73,6 +73,15 @@ To use this plugin, add flappy_search_bar as a dependency in your pubspec.yaml f
   }
 ```
 
+### Warning
+
+If you want to use a SearchBarController in order to do some sorts or filters, PLEASE put your instance of SearchBarController in a StateFullWidget.
+
+If not, it will not work properly.
+
+If you don't use an instance of SearchBarController, you can keep everything in a StateLessWidget !
+
+
 ### Parameters
 
 | Name  | Type | Usage | Required | Default Value |
