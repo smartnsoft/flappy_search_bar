@@ -1,7 +1,7 @@
 name: flappy_search_bar
 description: A SearchBar widget handling most of search cases.
 version: 1.0.0
-author: Equinoa
+author: Equinoa<register@smartnsoft.com>
 homepage: https://github.com/smartnsoft/flappy_search_bar
 
 environment:
