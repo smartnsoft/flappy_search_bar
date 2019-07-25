@@ -7,35 +7,58 @@ import 'package:flutter/material.dart';
 import 'search_bar_style.dart';
 
 mixin _ControllerListener<T> on State<SearchBar<T>> {
-  void onSort() {}
-
-  void onFiltered(List<T> items) {}
+  void onListChanged(List<T> items) {}
 }
 
 class SearchBarController<T> {
-  final List<T> list = [];
+  final List<T> _list = [];
+  final List<T> _filteredList = [];
+  final List<T> _sortedList = [];
   _ControllerListener _controllerListener;
+  int Function(T a, T b) _lastSorting;
 
   void setListener(_ControllerListener _controllerListener) {
     this._controllerListener = _controllerListener;
   }
 
-  void setList(List<T> items) {
-    list.clear();
-    list.addAll(items);
+  void _search(String text, Future<List<T>> Function(String text) onSearch) async {
+    final List<T> items = await onSearch(text);
+    _list.clear();
+    _list.addAll(items);
+    _controllerListener?.onListChanged(_list);
   }
 
-  void clear() {
-    list.clear();
+  void removeFilter() {
+    _filteredList.clear();
+    if (_lastSorting == null) {
+      _controllerListener?.onListChanged(_list);
+    } else {
+      _sortedList.clear();
+      _sortedList.addAll(List<T>.from(_list));
+      _sortedList.sort(_lastSorting);
+      _controllerListener?.onListChanged(_sortedList);
+    }
+
+  }
+
+  void removeSort() {
+    _sortedList.clear();
+    _lastSorting = null;
+    _controllerListener?.onListChanged(_filteredList.isEmpty ? _list : _filteredList);
   }
 
   void sortList(int Function(T a, T b) sorting) {
-    list.sort(sorting);
-    _controllerListener?.onSort();
+    _lastSorting = sorting;
+    _sortedList.clear();
+    _sortedList.addAll(List<T>.from(_filteredList.isEmpty ? _list : _filteredList));
+    _sortedList.sort(sorting);
+    _controllerListener?.onListChanged(_sortedList);
   }
 
   void filterList(bool Function(T item) filter) {
-    _controllerListener?.onFiltered(list.where(filter).toList());
+    _filteredList.clear();
+    _filteredList.addAll(_sortedList.isEmpty ? _list.where(filter).toList() : _sortedList.where(filter).toList());
+    _controllerListener?.onListChanged(_filteredList);
   }
 }
 
@@ -93,6 +116,7 @@ class _SearchBarState<T> extends State<SearchBar<T>> with TickerProviderStateMix
   final _searchQueryController = TextEditingController();
   Timer _debounce;
   bool _animate = false;
+  List<T> _list = [];
 
   @override
   void initState() {
@@ -105,14 +129,10 @@ class _SearchBarState<T> extends State<SearchBar<T>> with TickerProviderStateMix
   }
 
   @override
-  void onSort() {
-    setState(() {});
-  }
-
-  @override
-  void onFiltered(List<T> items) {
+  void onListChanged(List<T> items) {
     setState(() {
-      widget.searchBarController.setList(items);
+      _loading = false;
+      _list = items;
     });
   }
 
@@ -130,20 +150,17 @@ class _SearchBarState<T> extends State<SearchBar<T>> with TickerProviderStateMix
         });
         if (widget.onSearch != null) {
           try {
-            final posts = await widget.onSearch(newText);
-            setState(() {
-              widget.searchBarController.setList(posts);
-              _loading = false;
-            });
+            widget.searchBarController._search(newText, widget.onSearch);
           } catch (error) {
             setState(() {
+              _loading = false;
               _error = widget.onError != null ? widget.onError(error) : Text("error");
             });
           }
         }
       } else {
         setState(() {
-          widget.searchBarController.clear();
+          _list.clear();
           _error = null;
           _loading = false;
           _animate = false;
@@ -155,7 +172,7 @@ class _SearchBarState<T> extends State<SearchBar<T>> with TickerProviderStateMix
   void _cancel() {
     setState(() {
       _searchQueryController.clear();
-      widget.searchBarController.clear();
+      _list.clear();
       _error = null;
       _loading = false;
       _animate = false;
@@ -179,8 +196,8 @@ class _SearchBarState<T> extends State<SearchBar<T>> with TickerProviderStateMix
     } else if (_searchQueryController.text.length < widget.minimumChars) {
       if (widget.placeHolder != null) return widget.placeHolder;
       return _buildListView(widget.suggestions, widget.buildSuggestion ?? widget.onItemFound);
-    } else if (widget.searchBarController.list.isNotEmpty) {
-      return _buildListView(widget.searchBarController.list, widget.onItemFound);
+    } else if (_list.isNotEmpty) {
+      return _buildListView(_list, widget.onItemFound);
     } else {
       return widget.emptyWidget;
     }
