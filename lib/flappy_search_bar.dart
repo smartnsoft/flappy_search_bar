@@ -4,6 +4,41 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
+import 'search_bar_style.dart';
+
+mixin _ControllerListener<T> on State<SearchBar<T>> {
+  void onSort() {}
+
+  void onFiltered(List<T> items) {}
+}
+
+class SearchBarController<T> {
+  final List<T> list = [];
+  _ControllerListener _controllerListener;
+
+  void setListener(_ControllerListener _controllerListener) {
+    this._controllerListener = _controllerListener;
+  }
+
+  void setList(List<T> items) {
+    list.clear();
+    list.addAll(items);
+  }
+
+  void clear() {
+    list.clear();
+  }
+
+  void sortList(int Function(T a, T b) sorting) {
+    list.sort(sorting);
+    _controllerListener?.onSort();
+  }
+
+  void filterList(bool Function(T item) filter) {
+    _controllerListener?.onFiltered(list.where(filter).toList());
+  }
+}
+
 class SearchBar<T> extends StatefulWidget {
   final Future<List<T>> Function(String text) onSearch;
   final List<T> suggestions;
@@ -14,22 +49,29 @@ class SearchBar<T> extends StatefulWidget {
   final Duration debounceDuration;
   final Widget loader;
   final Widget emptyWidget;
+  final Widget placeHolder;
   final Widget icon;
+  final Widget header;
   final String hintText;
   final TextStyle hintStyle;
   final Color iconActiveColor;
   final TextStyle textStyle;
   final Text cancellationText;
+  SearchBarController searchBarController;
+  final SearchBarStyle searchBarStyle;
 
-  const SearchBar({
+  SearchBar({
     Key key,
     @required this.onSearch,
     @required this.onItemFound,
+    this.searchBarController,
     this.minimumChars = 3,
     this.debounceDuration = const Duration(milliseconds: 500),
     this.loader = const CircularProgressIndicator(),
     this.onError,
     this.emptyWidget = const SizedBox.shrink(),
+    this.header,
+    this.placeHolder,
     this.icon = const Icon(Icons.search),
     this.hintText = "",
     this.hintStyle = const TextStyle(color: Color.fromRGBO(142, 142, 147, 1)),
@@ -38,14 +80,14 @@ class SearchBar<T> extends StatefulWidget {
     this.cancellationText = const Text("Cancel"),
     this.suggestions = const [],
     this.buildSuggestion,
+    this.searchBarStyle = const SearchBarStyle(),
   }) : super(key: key);
 
   @override
   _SearchBarState createState() => _SearchBarState<T>();
 }
 
-class _SearchBarState<T> extends State<SearchBar<T>> with TickerProviderStateMixin {
-  List<T> _items = [];
+class _SearchBarState<T> extends State<SearchBar<T>> with TickerProviderStateMixin, _ControllerListener<T> {
   bool _loading = false;
   Widget _error;
   final _searchQueryController = TextEditingController();
@@ -55,6 +97,23 @@ class _SearchBarState<T> extends State<SearchBar<T>> with TickerProviderStateMix
   @override
   void initState() {
     super.initState();
+    if (widget.searchBarController == null) {
+      widget.searchBarController = SearchBarController<T>();
+    }
+
+    widget.searchBarController.setListener(this);
+  }
+
+  @override
+  void onSort() {
+    setState(() {});
+  }
+
+  @override
+  void onFiltered(List<T> items) {
+    setState(() {
+      widget.searchBarController.setList(items);
+    });
   }
 
   _onTextChanged(String newText) async {
@@ -73,7 +132,7 @@ class _SearchBarState<T> extends State<SearchBar<T>> with TickerProviderStateMix
           try {
             final posts = await widget.onSearch(newText);
             setState(() {
-              _items = posts;
+              widget.searchBarController.setList(posts);
               _loading = false;
             });
           } catch (error) {
@@ -84,7 +143,7 @@ class _SearchBarState<T> extends State<SearchBar<T>> with TickerProviderStateMix
         }
       } else {
         setState(() {
-          _items.clear();
+          widget.searchBarController.clear();
           _error = null;
           _loading = false;
           _animate = false;
@@ -96,7 +155,7 @@ class _SearchBarState<T> extends State<SearchBar<T>> with TickerProviderStateMix
   void _cancel() {
     setState(() {
       _searchQueryController.clear();
-      _items.clear();
+      widget.searchBarController.clear();
       _error = null;
       _loading = false;
       _animate = false;
@@ -114,21 +173,16 @@ class _SearchBarState<T> extends State<SearchBar<T>> with TickerProviderStateMix
 
   Widget _buildContent(BuildContext context) {
     if (_error != null) {
-      return Center(
-        child: _error,
-      );
+      return _error;
     } else if (_loading) {
-      return Center(
-        child: widget.loader,
-      );
+      return widget.loader;
     } else if (_searchQueryController.text.length < widget.minimumChars) {
+      if (widget.placeHolder != null) return widget.placeHolder;
       return _buildListView(widget.suggestions, widget.buildSuggestion ?? widget.onItemFound);
-    } else if (_items.isNotEmpty) {
-      return _buildListView(_items, widget.onItemFound);
+    } else if (widget.searchBarController.list.isNotEmpty) {
+      return _buildListView(widget.searchBarController.list, widget.onItemFound);
     } else {
-      return Center(
-        child: widget.emptyWidget,
-      );
+      return widget.emptyWidget;
     }
   }
 
@@ -136,6 +190,7 @@ class _SearchBarState<T> extends State<SearchBar<T>> with TickerProviderStateMix
   Widget build(BuildContext context) {
     final widthMax = MediaQuery.of(context).size.width;
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Container(
           height: 80,
@@ -147,11 +202,11 @@ class _SearchBarState<T> extends State<SearchBar<T>> with TickerProviderStateMix
                   duration: Duration(milliseconds: 200),
                   width: _animate ? widthMax * .8 : widthMax,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                    color: Color.fromRGBO(142, 142, 147, .15),
+                    borderRadius: widget.searchBarStyle.borderRadius,
+                    color: widget.searchBarStyle.backgroundColor,
                   ),
                   child: Padding(
-                    padding: const EdgeInsets.all(5.0),
+                    padding: widget.searchBarStyle.padding,
                     child: Theme(
                       child: TextField(
                         controller: _searchQueryController,
@@ -189,6 +244,7 @@ class _SearchBarState<T> extends State<SearchBar<T>> with TickerProviderStateMix
             ],
           ),
         ),
+        widget.header ?? Container(),
         Expanded(
           child: _buildContent(context),
         ),
