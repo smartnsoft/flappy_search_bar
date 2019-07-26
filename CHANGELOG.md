@@ -13,3 +13,9 @@ Finally, giving a SearchBarStyle, you will be able to change the SearchBar's sty
 ## [1.1.1] - 25/07/2019
 
 * Fixing bug on hot reload and on Controller state
+
+
+## [1.2.0] - 26/07/2019
+
+# Future are now cancelled if another request is made and prev was not completed yet
+* Increased a little bit the "cancellation" widget click's surface
