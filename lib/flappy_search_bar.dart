@@ -2,6 +2,7 @@ library flappy_search_bar;
 
 import 'dart:async';
 
+import 'package:async/async.dart';
 import 'package:flutter/material.dart';
 
 import 'search_bar_style.dart';
@@ -18,6 +19,7 @@ class SearchBarController<T> {
   final List<T> _sortedList = [];
   _ControllerListener _controllerListener;
   int Function(T a, T b) _lastSorting;
+  CancelableOperation _cancelableOperation;
 
   void setListener(_ControllerListener _controllerListener) {
     this._controllerListener = _controllerListener;
@@ -25,7 +27,15 @@ class SearchBarController<T> {
 
   void _search(String text, Future<List<T>> Function(String text) onSearch) async {
     try {
-      final List<T> items = await onSearch(text);
+      if (_cancelableOperation != null && (!_cancelableOperation.isCompleted || !_cancelableOperation.isCanceled)) {
+        _cancelableOperation.cancel();
+      }
+      _cancelableOperation = CancelableOperation.fromFuture(
+        onSearch(text),
+        onCancel: () => {},
+      );
+
+      final List<T> items = await _cancelableOperation.value;
       _list.clear();
       _filteredList.clear();
       _sortedList.clear();
@@ -250,17 +260,20 @@ class _SearchBarState<T> extends State<SearchBar<T>> with TickerProviderStateMix
                   ),
                 ),
               ),
-              AnimatedOpacity(
-                opacity: _animate ? 1.0 : 0,
-                curve: Curves.easeIn,
-                duration: Duration(milliseconds: _animate ? 1000 : 0),
-                child: AnimatedContainer(
-                  duration: Duration(milliseconds: 200),
-                  width: _animate ? MediaQuery.of(context).size.width * .2 : 0,
-                  child: Center(
-                    child: GestureDetector(
-                      onTap: _cancel,
-                      child: widget.cancellationText,
+              GestureDetector(
+                onTap: _cancel,
+                child: AnimatedOpacity(
+                  opacity: _animate ? 1.0 : 0,
+                  curve: Curves.easeIn,
+                  duration: Duration(milliseconds: _animate ? 1000 : 0),
+                  child: AnimatedContainer(
+                    duration: Duration(milliseconds: 200),
+                    width: _animate ? MediaQuery.of(context).size.width * .2 : 0,
+                    child: Container(
+                      color: Colors.transparent,
+                      child: Center(
+                        child: widget.cancellationText,
+                      ),
                     ),
                   ),
                 ),
