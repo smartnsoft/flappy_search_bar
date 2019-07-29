@@ -23,3 +23,7 @@ Finally, giving a SearchBarStyle, you will be able to change the SearchBar's sty
 ## [1.3.0] - 29/07/2019
 
 * SearchBarController is now enable to replay last search
+
+## [1.3.1] - 29/07/2019
+
+* Fix API replay's method's name
