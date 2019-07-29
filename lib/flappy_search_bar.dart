@@ -10,6 +10,8 @@ import 'search_bar_style.dart';
 mixin _ControllerListener<T> on State<SearchBar<T>> {
   void onListChanged(List<T> items) {}
 
+  void onLoading() {}
+
   void onError(Error error) {}
 }
 
@@ -17,6 +19,8 @@ class SearchBarController<T> {
   final List<T> _list = [];
   final List<T> _filteredList = [];
   final List<T> _sortedList = [];
+  String _lastSearchedText;
+  Future<List<T>> Function(String text) _lastSearchFunction;
   _ControllerListener _controllerListener;
   int Function(T a, T b) _lastSorting;
   CancelableOperation _cancelableOperation;
@@ -26,6 +30,7 @@ class SearchBarController<T> {
   }
 
   void _search(String text, Future<List<T>> Function(String text) onSearch) async {
+    _controllerListener?.onLoading();
     try {
       if (_cancelableOperation != null && (!_cancelableOperation.isCompleted || !_cancelableOperation.isCanceled)) {
         _cancelableOperation.cancel();
@@ -36,6 +41,8 @@ class SearchBarController<T> {
       );
 
       final List<T> items = await _cancelableOperation.value;
+      _lastSearchFunction = onSearch;
+      _lastSearchedText = text;
       _list.clear();
       _filteredList.clear();
       _sortedList.clear();
@@ -44,6 +51,12 @@ class SearchBarController<T> {
       _controllerListener?.onListChanged(_list);
     } catch (error) {
       _controllerListener?.onError(error);
+    }
+  }
+
+  void replayLastSearched() {
+    if (_lastSearchFunction != null && _lastSearchedText != null) {
+      _search(_lastSearchedText, _lastSearchFunction);
     }
   }
 
@@ -153,6 +166,15 @@ class _SearchBarState<T> extends State<SearchBar<T>> with TickerProviderStateMix
   }
 
   @override
+  void onLoading() {
+    setState(() {
+      _loading = true;
+      _error = null;
+      _animate = true;
+    });
+  }
+
+  @override
   void onError(Error error) {
     setState(() {
       _loading = false;
@@ -166,15 +188,8 @@ class _SearchBarState<T> extends State<SearchBar<T>> with TickerProviderStateMix
     }
 
     _debounce = Timer(widget.debounceDuration, () async {
-      if (newText.length >= widget.minimumChars) {
-        setState(() {
-          _loading = true;
-          _error = null;
-          _animate = true;
-        });
-        if (widget.onSearch != null) {
-          searchBarController._search(newText, widget.onSearch);
-        }
+      if (newText.length >= widget.minimumChars && widget.onSearch != null) {
+        searchBarController._search(newText, widget.onSearch);
       } else {
         setState(() {
           _list.clear();
