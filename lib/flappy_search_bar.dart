@@ -54,7 +54,7 @@ class SearchBarController<T> {
     }
   }
 
-  void replayLastSearched() {
+  void replayLastSearch() {
     if (_lastSearchFunction != null && _lastSearchedText != null) {
       _search(_lastSearchedText, _lastSearchFunction);
     }

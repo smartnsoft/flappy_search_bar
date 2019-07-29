@@ -77,7 +77,7 @@ class _HomeState extends State<Home> {
                   child: Text("Replay"),
                   onPressed: () {
                     isReplay = !isReplay;
-                    _searchBarController.replayLastSearched();
+                    _searchBarController.replayLastSearch();
                   },
                 ),
               ],
