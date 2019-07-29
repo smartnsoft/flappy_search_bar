@@ -19,3 +19,7 @@ Finally, giving a SearchBarStyle, you will be able to change the SearchBar's sty
 
 * Future are now cancelled if another request is made and prev was not completed yet
 * Increased a little bit the "cancellation" widget click's surface
+
+## [1.3.0] - 29/07/2019
+
+* SearchBarController is now enable to replay last search
