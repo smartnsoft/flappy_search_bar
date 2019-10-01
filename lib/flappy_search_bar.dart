@@ -4,6 +4,7 @@ import 'dart:async';
 
 import 'package:async/async.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
 import 'search_bar_style.dart';
 
@@ -113,6 +114,12 @@ class SearchBar<T> extends StatefulWidget {
   final Text cancellationText;
   SearchBarController searchBarController;
   final SearchBarStyle searchBarStyle;
+  final int crossAxisCount;
+  final bool shrinkWrap;
+  final IndexedStaggeredTileBuilder staggeredTileBuilder;
+  final Axis scrollDirection;
+  final double mainAxisSpacing;
+  final double crossAxisSpacing;
 
   SearchBar({
     Key key,
@@ -135,6 +142,12 @@ class SearchBar<T> extends StatefulWidget {
     this.suggestions = const [],
     this.buildSuggestion,
     this.searchBarStyle = const SearchBarStyle(),
+    this.crossAxisCount = 1,
+    this.shrinkWrap = false,
+    this.staggeredTileBuilder,
+    this.scrollDirection = Axis.vertical,
+    this.mainAxisSpacing = 0.0,
+    this.crossAxisSpacing = 0.0,
   }) : super(key: key);
 
   @override
@@ -212,8 +225,14 @@ class _SearchBarState<T> extends State<SearchBar<T>> with TickerProviderStateMix
   }
 
   Widget _buildListView(List<T> items, Widget Function(T item, int index) builder) {
-    return ListView.builder(
+    return StaggeredGridView.countBuilder(
+      crossAxisCount: widget.crossAxisCount,
       itemCount: items.length,
+      shrinkWrap: widget.shrinkWrap,
+      staggeredTileBuilder: widget.staggeredTileBuilder ?? (int index) => StaggeredTile.fit(1),
+      scrollDirection: widget.scrollDirection,
+      mainAxisSpacing: widget.mainAxisSpacing,
+      crossAxisSpacing: widget.crossAxisSpacing,
       itemBuilder: (BuildContext context, int index) {
         return builder(items[index], index);
       },

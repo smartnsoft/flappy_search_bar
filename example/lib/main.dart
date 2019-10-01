@@ -82,13 +82,20 @@ class _HomeState extends State<Home> {
                 ),
               ],
             ),
+            mainAxisSpacing: 10,
+            crossAxisSpacing: 10,
+            crossAxisCount: 2,
             onItemFound: (Post post, int index) {
-              return ListTile(
-                title: Text(post.title),
-                subtitle: Text(post.body),
-                onTap: () {
-                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => Detail()));
-                },
+              return Container(
+                color: Colors.lightBlue,
+                child: ListTile(
+                  title: Text(post.title),
+                  isThreeLine: true,
+                  subtitle: Text(post.body),
+                  onTap: () {
+                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => Detail()));
+                  },
+                ),
               );
             },
           ),
