@@ -175,6 +175,15 @@ class SearchBar<T> extends StatefulWidget {
   /// Spacing between tiles on cross axis
   final double crossAxisSpacing;
 
+  /// Set a padding on the search bar
+  final EdgeInsetsGeometry searchBarPadding;
+
+  /// Set a padding on the header
+  final EdgeInsetsGeometry headerPadding;
+
+  /// Set a padding on the list
+  final EdgeInsetsGeometry listPadding;
+
   SearchBar({
     Key key,
     @required this.onSearch,
@@ -202,6 +211,9 @@ class SearchBar<T> extends StatefulWidget {
     this.scrollDirection = Axis.vertical,
     this.mainAxisSpacing = 0.0,
     this.crossAxisSpacing = 0.0,
+    this.listPadding = const EdgeInsets.all(0),
+    this.searchBarPadding = const EdgeInsets.all(0),
+    this.headerPadding = const EdgeInsets.all(0),
   }) : super(key: key);
 
   @override
@@ -279,18 +291,21 @@ class _SearchBarState<T> extends State<SearchBar<T>> with TickerProviderStateMix
   }
 
   Widget _buildListView(List<T> items, Widget Function(T item, int index) builder) {
-    return StaggeredGridView.countBuilder(
-      crossAxisCount: widget.crossAxisCount,
-      itemCount: items.length,
-      shrinkWrap: widget.shrinkWrap,
-      staggeredTileBuilder:
-          widget.indexedScaledTileBuilder ?? (int index) => ScaledTile.fit(1),
-      scrollDirection: widget.scrollDirection,
-      mainAxisSpacing: widget.mainAxisSpacing,
-      crossAxisSpacing: widget.crossAxisSpacing,
-      itemBuilder: (BuildContext context, int index) {
-        return builder(items[index], index);
-      },
+    return Padding(
+      padding: widget.listPadding,
+      child: StaggeredGridView.countBuilder(
+        crossAxisCount: widget.crossAxisCount,
+        itemCount: items.length,
+        shrinkWrap: widget.shrinkWrap,
+        staggeredTileBuilder: widget.indexedScaledTileBuilder ?? (int index) => ScaledTile.fit(1),
+        scrollDirection: widget.scrollDirection,
+        mainAxisSpacing: widget.mainAxisSpacing,
+        crossAxisSpacing: widget.crossAxisSpacing,
+        addAutomaticKeepAlives: true,
+        itemBuilder: (BuildContext context, int index) {
+          return builder(items[index], index);
+        },
+      ),
     );
   }
 
@@ -315,62 +330,68 @@ class _SearchBarState<T> extends State<SearchBar<T>> with TickerProviderStateMix
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Container(
-          height: 80,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              Flexible(
-                child: AnimatedContainer(
-                  duration: Duration(milliseconds: 200),
-                  width: _animate ? widthMax * .8 : widthMax,
-                  decoration: BoxDecoration(
-                    borderRadius: widget.searchBarStyle.borderRadius,
-                    color: widget.searchBarStyle.backgroundColor,
-                  ),
-                  child: Padding(
-                    padding: widget.searchBarStyle.padding,
-                    child: Theme(
-                      child: TextField(
-                        controller: _searchQueryController,
-                        onChanged: _onTextChanged,
-                        style: widget.textStyle,
-                        decoration: InputDecoration(
-                          icon: widget.icon,
-                          border: InputBorder.none,
-                          hintText: widget.hintText,
-                          hintStyle: widget.hintStyle,
-                        ),
-                      ),
-                      data: Theme.of(context).copyWith(
-                        primaryColor: widget.iconActiveColor,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              GestureDetector(
-                onTap: _cancel,
-                child: AnimatedOpacity(
-                  opacity: _animate ? 1.0 : 0,
-                  curve: Curves.easeIn,
-                  duration: Duration(milliseconds: _animate ? 1000 : 0),
+        Padding(
+          padding: widget.searchBarPadding,
+          child: Container(
+            height: 80,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                Flexible(
                   child: AnimatedContainer(
                     duration: Duration(milliseconds: 200),
-                    width: _animate ? MediaQuery.of(context).size.width * .2 : 0,
-                    child: Container(
-                      color: Colors.transparent,
-                      child: Center(
-                        child: widget.cancellationText,
+                    width: _animate ? widthMax * .8 : widthMax,
+                    decoration: BoxDecoration(
+                      borderRadius: widget.searchBarStyle.borderRadius,
+                      color: widget.searchBarStyle.backgroundColor,
+                    ),
+                    child: Padding(
+                      padding: widget.searchBarStyle.padding,
+                      child: Theme(
+                        child: TextField(
+                          controller: _searchQueryController,
+                          onChanged: _onTextChanged,
+                          style: widget.textStyle,
+                          decoration: InputDecoration(
+                            icon: widget.icon,
+                            border: InputBorder.none,
+                            hintText: widget.hintText,
+                            hintStyle: widget.hintStyle,
+                          ),
+                        ),
+                        data: Theme.of(context).copyWith(
+                          primaryColor: widget.iconActiveColor,
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ],
+                GestureDetector(
+                  onTap: _cancel,
+                  child: AnimatedOpacity(
+                    opacity: _animate ? 1.0 : 0,
+                    curve: Curves.easeIn,
+                    duration: Duration(milliseconds: _animate ? 1000 : 0),
+                    child: AnimatedContainer(
+                      duration: Duration(milliseconds: 200),
+                      width: _animate ? MediaQuery.of(context).size.width * .2 : 0,
+                      child: Container(
+                        color: Colors.transparent,
+                        child: Center(
+                          child: widget.cancellationText,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
-        widget.header ?? Container(),
+        Padding(
+          padding: widget.headerPadding,
+          child: widget.header ?? Container(),
+        ),
         Expanded(
           child: _buildContent(context),
         ),
