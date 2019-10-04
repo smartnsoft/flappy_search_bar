@@ -112,6 +112,9 @@ If you don't use an instance of SearchBarController, you can keep everything in 
 | mainAxisSpacing  | int | Set the spacing between each tiles on main axis | no| 10 |
 | crossAxisSpacing  | int | Set the spacing between each tiles on cross axis | no| 10 |
 | indexedScaledTileBuilder  | IndexedScaledTileBuilder | Builder letting you decide how much space each tile should take | no| (int index) => ScaledTile.count(1, index.isEven ? 2 : 1) |  
+| searchBarPadding  | EdgeInsetsGeometry | Set a padding on the search bar | no| EdgeInsets.symmetric(horizontal: 10) |
+| headerPadding  | EdgeInsetsGeometry | Set a padding on the header | no| EdgeInsets.symmetric(horizontal: 10) |
+| listPadding  | EdgeInsetsGeometry | Set a padding on the list | no| EdgeInsets.symmetric(horizontal: 10) |
   
 ### SearchBar default SearchBarStyle
 
