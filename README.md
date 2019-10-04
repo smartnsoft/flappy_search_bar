@@ -85,7 +85,6 @@ If not, it will not work properly.
 
 If you don't use an instance of SearchBarController, you can keep everything in a StateLessWidget !
 
-
 ### Parameters
 
 | Name  | Type | Usage | Required | Default Value |
@@ -107,7 +106,13 @@ If you don't use an instance of SearchBarController, you can keep everything in 
 | iconActiveColor  | Color | Color of icon when active | no| Colors.black |
 | textStyle  | TextSTyle | TextStyle of searched text | no| TextStyle(color: Colors.black) |
 | cancellationText  | Text | Text shown on right of the SearchBar | no| Text("Cancel") |
-
+| crossAxisCount  | int | Number of tiles on cross axis (Grid) | no| 2 |
+| shrinkWrap  | bool | Wether list should be shrinked or not (take minimum space) | no| true |
+| scrollDirection  | Axis | Set the scroll direction | no| Axis.vertical |
+| mainAxisSpacing  | int | Set the spacing between each tiles on main axis | no| 10 |
+| crossAxisSpacing  | int | Set the spacing between each tiles on cross axis | no| 10 |
+| indexedScaledTileBuilder  | IndexedScaledTileBuilder | Builder letting you decide how much space each tile should take | no| (int index) => ScaledTile.count(1, index.isEven ? 2 : 1) |  
+  
 ### SearchBar default SearchBarStyle
 
 | Name  | Type | default Value |
