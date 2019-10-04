@@ -27,3 +27,8 @@ Finally, giving a SearchBarStyle, you will be able to change the SearchBar's sty
 ## [1.3.1] - 29/07/2019
 
 * Fix API replay's method's name
+
+## [1.4.0] - 04/10/2019
+
+* Add possibility to display items in a Grid
+* Possibility to customize the space taken by each individual tile 
