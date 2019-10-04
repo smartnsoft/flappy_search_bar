@@ -32,3 +32,7 @@ Finally, giving a SearchBarStyle, you will be able to change the SearchBar's sty
 
 * Add possibility to display items in a Grid
 * Possibility to customize the space taken by each individual tile 
+
+## [1.4.1] - 04/10/2019
+
+* Add possibility to customize padding on List, Header and Search bar
