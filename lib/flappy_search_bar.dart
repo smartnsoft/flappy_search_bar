@@ -3,6 +3,7 @@ library flappy_search_bar;
 import 'dart:async';
 
 import 'package:async/async.dart';
+import 'package:flappy_search_bar/scaled_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
@@ -94,31 +95,84 @@ class SearchBarController<T> {
   }
 }
 
+/// Signature for a function that creates [ScaledTile] for a given index.
+typedef ScaledTile IndexedScaledTileBuilder(int index);
+
 class SearchBar<T> extends StatefulWidget {
+  /// Future returning searched items
   final Future<List<T>> Function(String text) onSearch;
+
+  /// List of items showed by default
   final List<T> suggestions;
+
+  /// Callback returning the widget corresponding to a Suggestion item
   final Widget Function(T item, int index) buildSuggestion;
+
+  /// Minimum number of chars required for a search
   final int minimumChars;
+
+  /// Callback returning the widget corresponding to an item found
   final Widget Function(T item, int index) onItemFound;
+
+  /// Callback returning the widget corresponding to an Error while searching
   final Widget Function(Error error) onError;
+
+  /// Cooldown between each call to avoid too many
   final Duration debounceDuration;
+
+  /// Widget to show when loading
   final Widget loader;
+
+  /// Widget to show when no item were found
   final Widget emptyWidget;
+
+  /// Widget to show by default
   final Widget placeHolder;
+
+  /// Widget showed on left of the search bar
   final Widget icon;
+
+  /// Widget placed between the search bar and the results
   final Widget header;
+
+  /// Hint text of the search bar
   final String hintText;
+
+  /// TextStyle of the hint text
   final TextStyle hintStyle;
+
+  /// Color of the icon when search bar is active
   final Color iconActiveColor;
+
+  /// Text style of the text in the search bar
   final TextStyle textStyle;
+
+  /// Text shown for cancellation
   final Text cancellationText;
+
+  /// Controller used to be able to sort, filter or replay the search
   SearchBarController searchBarController;
+
+  /// Enable to edit the style of the search bar
   final SearchBarStyle searchBarStyle;
+
+  /// Number of items displayed on cross axis
   final int crossAxisCount;
+
+  /// Weather the list should take the minimum place or not
   final bool shrinkWrap;
-  final IndexedStaggeredTileBuilder staggeredTileBuilder;
+
+  /// Called to get the tile at the specified index for the
+  /// [SliverGridStaggeredTileLayout].
+  final IndexedScaledTileBuilder indexedScaledTileBuilder;
+
+  /// Set the scrollDirection
   final Axis scrollDirection;
+
+  /// Spacing between tiles on main axis
   final double mainAxisSpacing;
+
+  /// Spacing between tiles on cross axis
   final double crossAxisSpacing;
 
   SearchBar({
@@ -144,7 +198,7 @@ class SearchBar<T> extends StatefulWidget {
     this.searchBarStyle = const SearchBarStyle(),
     this.crossAxisCount = 1,
     this.shrinkWrap = false,
-    this.staggeredTileBuilder,
+    this.indexedScaledTileBuilder,
     this.scrollDirection = Axis.vertical,
     this.mainAxisSpacing = 0.0,
     this.crossAxisSpacing = 0.0,
@@ -229,7 +283,8 @@ class _SearchBarState<T> extends State<SearchBar<T>> with TickerProviderStateMix
       crossAxisCount: widget.crossAxisCount,
       itemCount: items.length,
       shrinkWrap: widget.shrinkWrap,
-      staggeredTileBuilder: widget.staggeredTileBuilder ?? (int index) => StaggeredTile.fit(1),
+      staggeredTileBuilder:
+          widget.indexedScaledTileBuilder ?? (int index) => ScaledTile.fit(1),
       scrollDirection: widget.scrollDirection,
       mainAxisSpacing: widget.mainAxisSpacing,
       crossAxisSpacing: widget.crossAxisSpacing,

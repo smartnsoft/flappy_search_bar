@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flappy_search_bar/flappy_search_bar.dart';
+import 'package:flappy_search_bar/scaled_tile.dart';
 import 'package:flutter/material.dart';
 
 void main() => runApp(MyApp());
@@ -57,6 +58,7 @@ class _HomeState extends State<Home> {
             placeHolder: Text("placeholder"),
             cancellationText: Text("Annuler"),
             emptyWidget: Text("empty"),
+            indexedScaledTileBuilder: (int index) => ScaledTile.count(1, index.isEven ? 2 : 1),
             header: Row(
               children: <Widget>[
                 RaisedButton(
