@@ -40,3 +40,7 @@ Finally, giving a SearchBarStyle, you will be able to change the SearchBar's sty
 ## [1.5.1] - 14/01/2020
 
 * Add callback on cancellation's button click
+
+## [1.5.2] - 14/01/2020
+
+* Fix README by adding cancellation's callback documentation

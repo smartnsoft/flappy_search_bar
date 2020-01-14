@@ -45,6 +45,9 @@ To use this plugin, add flappy_search_bar as a dependency in your pubspec.yaml f
                 subtitle: Text(post.body),
               );
             },
+            onCancelled: () {
+              print("Cancelled triggered");
+            },
             header: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: <Widget>[
@@ -106,6 +109,7 @@ If you don't use an instance of SearchBarController, you can keep everything in 
 | iconActiveColor  | Color | Color of icon when active | no| Colors.black |
 | textStyle  | TextSTyle | TextStyle of searched text | no| TextStyle(color: Colors.black) |
 | cancellationText  | Text | Text shown on right of the SearchBar | no| Text("Cancel") |
+| onCancelled  | VoidCallback | Callback triggered on cancellation's button click | no| null |
 | crossAxisCount  | int | Number of tiles on cross axis (Grid) | no| 2 |
 | shrinkWrap  | bool | Wether list should be shrinked or not (take minimum space) | no| true |
 | scrollDirection  | Axis | Set the scroll direction | no| Axis.vertical |
