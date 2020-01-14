@@ -36,3 +36,7 @@ Finally, giving a SearchBarStyle, you will be able to change the SearchBar's sty
 ## [1.4.1] - 04/10/2019
 
 * Add possibility to customize padding on List, Header and Search bar
+
+## [1.5.1] - 14/01/2020
+
+* Add callback on cancellation's button click
