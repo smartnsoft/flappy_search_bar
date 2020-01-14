@@ -150,6 +150,9 @@ class SearchBar<T> extends StatefulWidget {
   /// Text shown for cancellation
   final Text cancellationText;
 
+  /// Callback when cancel button is triggered
+  final VoidCallback onCancelled;
+
   /// Controller used to be able to sort, filter or replay the search
   SearchBarController searchBarController;
 
@@ -202,6 +205,7 @@ class SearchBar<T> extends StatefulWidget {
     this.iconActiveColor = Colors.black,
     this.textStyle = const TextStyle(color: Colors.black),
     this.cancellationText = const Text("Cancel"),
+    this.onCancelled,
     this.suggestions = const [],
     this.buildSuggestion,
     this.searchBarStyle = const SearchBarStyle(),
@@ -281,6 +285,10 @@ class _SearchBarState<T> extends State<SearchBar<T>> with TickerProviderStateMix
   }
 
   void _cancel() {
+    if (widget.onCancelled != null) {
+      widget.onCancelled();
+    }
+
     setState(() {
       _searchQueryController.clear();
       _list.clear();
