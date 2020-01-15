@@ -14,6 +14,8 @@ mixin _ControllerListener<T> on State<SearchBar<T>> {
 
   void onLoading() {}
 
+  void onClear() {}
+
   void onError(Error error) {}
 }
 
@@ -29,6 +31,10 @@ class SearchBarController<T> {
 
   void setListener(_ControllerListener _controllerListener) {
     this._controllerListener = _controllerListener;
+  }
+
+  void clear() {
+    _controllerListener?.onClear();
   }
 
   void _search(
@@ -264,6 +270,11 @@ class _SearchBarState<T> extends State<SearchBar<T>>
       _error = null;
       _animate = true;
     });
+  }
+
+  @override
+  void onClear() {
+    _cancel();
   }
 
   @override
