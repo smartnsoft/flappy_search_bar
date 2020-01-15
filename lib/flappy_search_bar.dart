@@ -167,7 +167,7 @@ class SearchBar<T> extends StatefulWidget {
   final VoidCallback onCancelled;
 
   /// Controller used to be able to sort, filter or replay the search
-  SearchBarController searchBarController;
+  final SearchBarController searchBarController;
 
   /// Enable to edit the style of the search bar
   final SearchBarStyle searchBarStyle;
