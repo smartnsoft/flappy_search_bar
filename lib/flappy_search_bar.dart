@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
 import 'search_bar_style.dart';
+import 'cancel_button_style.dart';
 
 mixin _ControllerListener<T> on State<SearchBar<T>> {
   void onListChanged(List<T> items) {}
@@ -161,7 +162,7 @@ class SearchBar<T> extends StatefulWidget {
   final TextStyle textStyle;
 
   /// Text shown for cancellation
-  final Text cancellationText;
+  final CancelButtonStyle cancellationButton;
 
   /// Callback when cancel button is triggered
   final VoidCallback onCancelled;
@@ -217,7 +218,7 @@ class SearchBar<T> extends StatefulWidget {
     this.hintStyle = const TextStyle(color: Color.fromRGBO(142, 142, 147, 1)),
     this.iconActiveColor = Colors.black,
     this.textStyle = const TextStyle(color: Colors.black),
-    this.cancellationText = const Text("Cancel"),
+    this.cancellationButton = const CancelButtonStyle(content: Text("Cancel")),
     this.onCancelled,
     this.suggestions = const [],
     this.buildSuggestion,
@@ -408,9 +409,13 @@ class _SearchBarState<T> extends State<SearchBar<T>>
                       width:
                           _animate ? MediaQuery.of(context).size.width * .2 : 0,
                       child: Container(
-                        color: Colors.transparent,
+                        decoration: BoxDecoration(
+                          borderRadius: widget.cancellationButton.borderRadius,
+                          color: widget.cancellationButton.backgroundColor,
+                        ),
+                        margin: widget.cancellationButton.margin,
                         child: Center(
-                          child: widget.cancellationText,
+                          child: widget.cancellationButton.content
                         ),
                       ),
                     ),
