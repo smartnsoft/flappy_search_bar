@@ -57,7 +57,7 @@ class _HomeState extends State<Home> {
           onSearch: _getALlPosts,
           searchBarController: _searchBarController,
           placeHolder: Text("placeholder"),
-          cancellationText: Text("Annuler"),
+          cancellationWidget: Text("Cancel"),
           emptyWidget: Text("empty"),
           indexedScaledTileBuilder: (int index) => ScaledTile.count(1, index.isEven ? 2 : 1),
           header: Row(

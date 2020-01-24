@@ -72,3 +72,5 @@ build/
 !/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
 
 example/ios/Flutter/flutter_export_environment.sh
+
+example/ios/Flutter/Flutter.podspec

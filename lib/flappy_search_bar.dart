@@ -160,8 +160,8 @@ class SearchBar<T> extends StatefulWidget {
   /// Text style of the text in the search bar
   final TextStyle textStyle;
 
-  /// Text shown for cancellation
-  final Text cancellationText;
+  /// Widget shown for cancellation
+  final Widget cancellationWidget;
 
   /// Callback when cancel button is triggered
   final VoidCallback onCancelled;
@@ -217,7 +217,7 @@ class SearchBar<T> extends StatefulWidget {
     this.hintStyle = const TextStyle(color: Color.fromRGBO(142, 142, 147, 1)),
     this.iconActiveColor = Colors.black,
     this.textStyle = const TextStyle(color: Colors.black),
-    this.cancellationText = const Text("Cancel"),
+    this.cancellationWidget = const Text("Cancel"),
     this.onCancelled,
     this.suggestions = const [],
     this.buildSuggestion,
@@ -410,7 +410,7 @@ class _SearchBarState<T> extends State<SearchBar<T>>
                       child: Container(
                         color: Colors.transparent,
                         child: Center(
-                          child: widget.cancellationText,
+                          child: widget.cancellationWidget,
                         ),
                       ),
                     ),
