@@ -48,3 +48,7 @@ Finally, giving a SearchBarStyle, you will be able to change the SearchBar's sty
 ## [1.6.2] - 15/01/2020
 
 * Add possibility to clear everything with the controller
+
+## [1.7.2] - 24/01/2020
+
+* Change cancellation widget in order to take a `Widget` instead of just a `Text` to make it more customizable
