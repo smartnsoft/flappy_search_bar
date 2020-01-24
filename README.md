@@ -13,63 +13,60 @@ To use this plugin, add flappy_search_bar as a dependency in your pubspec.yaml f
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: SearchBar<Post>(
-            onSearch: (String text) => _getALlPosts(text),
-            suggestions: [
-              Post("Suggestion 1 titre", "Suggestion 1 body"),
-              Post("Suggestion 2 titre", "Suggestion 2 body")
+        child: SearchBar<Post>(
+          searchBarPadding: EdgeInsets.symmetric(horizontal: 10),
+          headerPadding: EdgeInsets.symmetric(horizontal: 10),
+          listPadding: EdgeInsets.symmetric(horizontal: 10),
+          onSearch: _getALlPosts,
+          searchBarController: _searchBarController,
+          placeHolder: Text("placeholder"),
+          cancellationWidget: Text("Cancel"),
+          emptyWidget: Text("empty"),
+          indexedScaledTileBuilder: (int index) => ScaledTile.count(1, index.isEven ? 2 : 1),
+          header: Row(
+            children: <Widget>[
+              RaisedButton(
+                child: Text("sort"),
+                onPressed: () {
+                  _searchBarController.sortList((Post a, Post b) {
+                    return a.body.compareTo(b.body);
+                  });
+                },
+              ),
+              RaisedButton(
+                child: Text("Desort"),
+                onPressed: () {
+                  _searchBarController.removeSort();
+                },
+              ),
+              RaisedButton(
+                child: Text("Replay"),
+                onPressed: () {
+                  isReplay = !isReplay;
+                  _searchBarController.replayLastSearch();
+                },
+              ),
             ],
-            searchBarController: _searchBarController,
-            minimumChars: 3,
-            searchBarStyle: SearchBarStyle(
-              borderRadius: BorderRadius.all(Radius.circular(10.0))
-            ),
-            debounceDuration: Duration(milliseconds: 400),
-            loader: Text("loading"),
-            onError: (Error error) => Text("ERREUR"),
-            emptyWidget: Text("Contenu vide !"),
-            hintText: "Test",
-            cancellationText: Text("Annuler"),
-            buildSuggestion: (Post post, int index) {
-              return ListTile(
-                title: Text(post.title),
-                subtitle: Text(post.body),
-                enabled: false,
-              );
-            },
-            onItemFound: (Post post, int index) {
-              return ListTile(
-                title: Text(post.title),
-                subtitle: Text(post.body),
-              );
-            },
-            onCancelled: () {
-              print("Cancelled triggered");
-            },
-            header: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: <Widget>[
-                RaisedButton(
-                  child: Text("Sort"),
-                  onPressed: changeSort,
-                ),
-                RaisedButton(
-                  child: Text("Rm Sort"),
-                  onPressed: removeSort,
-                ),
-                RaisedButton(
-                  child: Text("Filter"),
-                  onPressed: filter,
-                ),
-                RaisedButton(
-                  child: Text("Rm Filter"),
-                  onPressed: removeFilter,
-                ),
-              ],
-            ),
           ),
+          onCancelled: () {
+            print("Cancelled triggered");
+          },
+          mainAxisSpacing: 10,
+          crossAxisSpacing: 10,
+          crossAxisCount: 2,
+          onItemFound: (Post post, int index) {
+            return Container(
+              color: Colors.lightBlue,
+              child: ListTile(
+                title: Text(post.title),
+                isThreeLine: true,
+                subtitle: Text(post.body),
+                onTap: () {
+                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => Detail()));
+                },
+              ),
+            );
+          },
         ),
       ),
     );
@@ -108,7 +105,7 @@ If you don't use an instance of SearchBarController, you can keep everything in 
 | hintStyle  | TextStyle | Hint Text style| no| TextStyle(color: Color.fromRGBO(142, 142, 147, 1)) |
 | iconActiveColor  | Color | Color of icon when active | no| Colors.black |
 | textStyle  | TextSTyle | TextStyle of searched text | no| TextStyle(color: Colors.black) |
-| cancellationText  | Text | Text shown on right of the SearchBar | no| Text("Cancel") |
+| cancellationWidget  | Widget | Widget shown on right of the SearchBar | no| Text("Cancel") |
 | onCancelled  | VoidCallback | Callback triggered on cancellation's button click | no| null |
 | crossAxisCount  | int | Number of tiles on cross axis (Grid) | no| 2 |
 | shrinkWrap  | bool | Wether list should be shrinked or not (take minimum space) | no| true |
