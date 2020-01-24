@@ -104,7 +104,7 @@ If you don't use an instance of SearchBarController, you can keep everything in 
 | hintText  | String | Hint Text | no| "" |
 | hintStyle  | TextStyle | Hint Text style| no| TextStyle(color: Color.fromRGBO(142, 142, 147, 1)) |
 | iconActiveColor  | Color | Color of icon when active | no| Colors.black |
-| textStyle  | TextSTyle | TextStyle of searched text | no| TextStyle(color: Colors.black) |
+| textStyle  | TextStyle | TextStyle of searched text | no| TextStyle(color: Colors.black) |
 | cancellationWidget  | Widget | Widget shown on right of the SearchBar | no| Text("Cancel") |
 | onCancelled  | VoidCallback | Callback triggered on cancellation's button click | no| null |
 | crossAxisCount  | int | Number of tiles on cross axis (Grid) | no| 2 |
