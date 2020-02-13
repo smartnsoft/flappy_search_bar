@@ -65,6 +65,10 @@ class SearchBarController<T> {
     }
   }
 
+  void injectSearch(String searchText, Future<List<T>> Function(String text) onSearch) {
+      _search(searchText, onSearch);
+  }
+
   void replayLastSearch() {
     if (_lastSearchFunction != null && _lastSearchedText != null) {
       _search(_lastSearchedText, _lastSearchFunction);
