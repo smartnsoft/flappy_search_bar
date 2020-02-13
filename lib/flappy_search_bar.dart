@@ -74,7 +74,7 @@ class SearchBarController<T> {
 
   void injectSearch(
       String searchText, Future<List<T>> Function(String text) onSearch) {
-    if (searchText != null && searchText.length > 3) {
+    if (searchText != null && searchText.length >= minimumChars) {
       _searchQueryController.text = searchText;
       _search(searchText, onSearch);
     }
