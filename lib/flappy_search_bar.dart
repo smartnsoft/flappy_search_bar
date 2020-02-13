@@ -23,14 +23,16 @@ class SearchBarController<T> {
   final List<T> _list = [];
   final List<T> _filteredList = [];
   final List<T> _sortedList = [];
-  final TextEditingController _searchQueryController;
+  TextEditingController _searchQueryController;
   String _lastSearchedText;
   Future<List<T>> Function(String text) _lastSearchFunction;
   _ControllerListener _controllerListener;
   int Function(T a, T b) _lastSorting;
   CancelableOperation _cancelableOperation;
 
-  SearchBarController(this._searchQueryController);
+  void setTextController(TextEditingController _searchQueryController){
+    this._searchQueryController = _searchQueryController;
+  }
 
   void setListener(_ControllerListener _controllerListener) {
     this._controllerListener = _controllerListener;
@@ -260,8 +262,9 @@ class _SearchBarState<T> extends State<SearchBar<T>>
   void initState() {
     super.initState();
     searchBarController = widget.searchBarController ??
-        SearchBarController<T>(_searchQueryController);
+        SearchBarController<T>();
     searchBarController.setListener(this);
+    searchBarController.setTextController(_searchQueryController);
   }
 
   @override
