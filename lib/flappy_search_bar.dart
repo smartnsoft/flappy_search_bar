@@ -7,7 +7,16 @@ import 'package:flappy_search_bar/scaled_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
-import 'search_bar_style.dart';
+class SearchBarStyle {
+  final Color backgroundColor;
+  final EdgeInsetsGeometry padding;
+  final BorderRadius borderRadius;
+
+  const SearchBarStyle(
+      {this.backgroundColor = const Color.fromRGBO(142, 142, 147, .15),
+      this.padding = const EdgeInsets.all(5.0),
+      this.borderRadius: const BorderRadius.all(Radius.circular(5.0))});
+}
 
 mixin _ControllerListener<T> on State<SearchBar<T>> {
   void onListChanged(List<T> items) {}
