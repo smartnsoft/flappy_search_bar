@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:async/async.dart';
 import 'package:flappy_search_bar/scaled_tile.dart';
 import 'package:flutter/material.dart';
@@ -255,12 +254,12 @@ class SearchBar<T> extends StatefulWidget {
     this.header,
     this.placeHolder,
     this.icon = const Icon(Icons.search),
-    this.hintText = "",
+    this.hintText = '',
     this.hintStyle = const TextStyle(color: Color.fromRGBO(142, 142, 147, 1)),
     this.iconActiveColor = Colors.black,
     this.textStyle = const TextStyle(color: Colors.black),
     this.useCancellationWidget = true,
-    this.cancellationWidget = const Text("Cancel"),
+    this.cancellationWidget = const Text('Cancel'),
     this.onCancelled,
     this.suggestions = const [],
     this.buildSuggestion,
@@ -337,11 +336,11 @@ class _SearchBarState<T> extends State<SearchBar<T>>
   void onError(Error error) {
     setState(() {
       _loading = false;
-      _error = widget.onError != null ? widget.onError(error) : Text("error");
+      _error = widget.onError != null ? widget.onError(error) : Text('error');
     });
   }
 
-  _onTextChanged(String newText) async {
+  void _onTextChanged(String newText) async {
     if (_debounce?.isActive ?? false) {
       _debounce.cancel();
     }
@@ -379,6 +378,7 @@ class _SearchBarState<T> extends State<SearchBar<T>>
     return Padding(
       padding: widget.listPadding,
       child: StaggeredGridView.countBuilder(
+        padding: const EdgeInsets.all(0.0),
         crossAxisCount: widget.crossAxisCount,
         itemCount: items.length,
         shrinkWrap: widget.shrinkWrap,
@@ -403,7 +403,9 @@ class _SearchBarState<T> extends State<SearchBar<T>>
     } else if (_loading) {
       content = widget.loader;
     } else if (_searchQueryController.text.length < widget.minimumChars) {
-      if (widget.placeHolder != null) return widget.placeHolder;
+      if (widget.placeHolder != null) {
+        return widget.placeHolder;
+      }
       content = _buildListView(
           widget.suggestions, widget.buildSuggestion ?? widget.onItemFound);
     } else if (_list.isNotEmpty) {
@@ -425,6 +427,17 @@ class _SearchBarState<T> extends State<SearchBar<T>>
     if (_firstLaunch && widget.autoFocus) {
       /// Gives search bar focus on first build.
       _firstLaunch = false;
+
+      final String currentQuery = _searchQueryController.text;
+
+      if (currentQuery.length >= widget.minimumChars) {
+        /// Runs an search immediately after the search bar is built.
+        searchBarController._search(
+          _searchQueryController.text,
+          widget.onSearch,
+        );
+      }
+
       FocusScope.of(context).requestFocus(_searchQueryFocusNode);
     }
 
@@ -438,75 +451,70 @@ class _SearchBarState<T> extends State<SearchBar<T>>
           ),
           child: Padding(
             padding: widget.searchBarPadding,
-            child: Container(
-              height: 80,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
-                  if (widget.leading != null) widget.leading,
-                  Flexible(
-                    child: AnimatedContainer(
-                      duration: Duration(milliseconds: 200),
-                      height: widget.searchBarStyle.searchBarHeight,
-                      width: _animate ? widthMax * .8 : widthMax,
-                      decoration: BoxDecoration(
-                        borderRadius: widget.searchBarStyle.borderRadius,
-                        color: widget.searchBarStyle.backgroundColor,
-                      ),
-                      child: Padding(
-                        padding: widget.searchBarStyle.padding,
-                        child: Theme(
-                          child: TextField(
-                            focusNode: _searchQueryFocusNode,
-                            controller: _searchQueryController,
-                            onChanged: widget.searchOnlyOnSubmit
-                                ? null
-                                : _onTextChanged,
-                            onSubmitted: widget.searchOnlyOnSubmit
-                                ? _onTextChanged
-                                : null,
-                            style: widget.textStyle,
-                            autocorrect: widget.enableSuggestions,
-                            enableSuggestions: widget.enableSuggestions,
-                            textInputAction: TextInputAction.search,
-                            decoration: InputDecoration(
-                              icon: widget.icon,
-                              border: InputBorder.none,
-                              hintText: widget.hintText,
-                              hintStyle: widget.hintStyle,
-                            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                if (widget.leading != null) widget.leading,
+                Flexible(
+                  child: AnimatedContainer(
+                    duration: Duration(milliseconds: 200),
+                    height: widget.searchBarStyle.searchBarHeight,
+                    width: _animate ? widthMax * .8 : widthMax,
+                    decoration: BoxDecoration(
+                      borderRadius: widget.searchBarStyle.borderRadius,
+                      color: widget.searchBarStyle.backgroundColor,
+                    ),
+                    child: Padding(
+                      padding: widget.searchBarStyle.padding,
+                      child: Theme(
+                        child: TextField(
+                          focusNode: _searchQueryFocusNode,
+                          controller: _searchQueryController,
+                          onChanged:
+                              widget.searchOnlyOnSubmit ? null : _onTextChanged,
+                          onSubmitted:
+                              widget.searchOnlyOnSubmit ? _onTextChanged : null,
+                          style: widget.textStyle,
+                          autocorrect: widget.enableSuggestions,
+                          enableSuggestions: widget.enableSuggestions,
+                          textInputAction: TextInputAction.unspecified,
+                          decoration: InputDecoration(
+                            icon: widget.icon,
+                            border: InputBorder.none,
+                            hintText: widget.hintText,
+                            hintStyle: widget.hintStyle,
                           ),
-                          data: Theme.of(context).copyWith(
-                            primaryColor: widget.iconActiveColor,
+                        ),
+                        data: Theme.of(context).copyWith(
+                          primaryColor: widget.iconActiveColor,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                if (widget.useCancellationWidget)
+                  GestureDetector(
+                    onTap: _cancel,
+                    child: AnimatedOpacity(
+                      opacity: _animate ? 1.0 : 0,
+                      curve: Curves.easeIn,
+                      duration: Duration(milliseconds: _animate ? 1000 : 0),
+                      child: AnimatedContainer(
+                        duration: Duration(milliseconds: 200),
+                        width: _animate
+                            ? MediaQuery.of(context).size.width * .2
+                            : 0,
+                        child: Container(
+                          color: Colors.transparent,
+                          child: Center(
+                            child: widget.cancellationWidget,
                           ),
                         ),
                       ),
                     ),
                   ),
-                  if (widget.useCancellationWidget)
-                    GestureDetector(
-                      onTap: _cancel,
-                      child: AnimatedOpacity(
-                        opacity: _animate ? 1.0 : 0,
-                        curve: Curves.easeIn,
-                        duration: Duration(milliseconds: _animate ? 1000 : 0),
-                        child: AnimatedContainer(
-                          duration: Duration(milliseconds: 200),
-                          width: _animate
-                              ? MediaQuery.of(context).size.width * .2
-                              : 0,
-                          child: Container(
-                            color: Colors.transparent,
-                            child: Center(
-                              child: widget.cancellationWidget,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  if (widget.trailing != null) widget.trailing,
-                ],
-              ),
+                if (widget.trailing != null) widget.trailing,
+              ],
             ),
           ),
         ),
