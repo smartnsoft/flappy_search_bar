@@ -23,11 +23,18 @@ class SearchBarController<T> {
   final List<T> _list = [];
   final List<T> _filteredList = [];
   final List<T> _sortedList = [];
+  TextEditingController _searchQueryController;
   String _lastSearchedText;
   Future<List<T>> Function(String text) _lastSearchFunction;
   _ControllerListener _controllerListener;
   int Function(T a, T b) _lastSorting;
   CancelableOperation _cancelableOperation;
+  int minimumChars;
+
+  void setTextController(TextEditingController _searchQueryController, minimunChars) {
+    this._searchQueryController = _searchQueryController;
+    this.minimumChars = minimunChars;
+  }
 
   void setListener(_ControllerListener _controllerListener) {
     this._controllerListener = _controllerListener;
@@ -62,6 +69,14 @@ class SearchBarController<T> {
       _controllerListener?.onListChanged(_list);
     } catch (error) {
       _controllerListener?.onError(error);
+    }
+  }
+
+  void injectSearch(
+      String searchText, Future<List<T>> Function(String text) onSearch) {
+    if (searchText != null && searchText.length >= minimumChars) {
+      _searchQueryController.text = searchText;
+      _search(searchText, onSearch);
     }
   }
 
@@ -253,6 +268,7 @@ class _SearchBarState<T> extends State<SearchBar<T>>
     searchBarController =
         widget.searchBarController ?? SearchBarController<T>();
     searchBarController.setListener(this);
+    searchBarController.setTextController(_searchQueryController, widget.minimumChars);
   }
 
   @override
