@@ -232,7 +232,7 @@ class SearchBar<T> extends StatefulWidget {
     this.hintStyle = const TextStyle(color: Color.fromRGBO(142, 142, 147, 1)),
     this.iconActiveColor = Colors.black,
     this.textStyle = const TextStyle(color: Colors.black),
-    this.cancellationWidget = const Text("Cancel"),
+    this.cancellationWidget = const Text("Cancel", overflow: TextOverflow.fade, maxLines: 1, softWrap: false),
     this.onCancelled,
     this.suggestions = const [],
     this.buildSuggestion,
@@ -418,15 +418,18 @@ class _SearchBarState<T> extends State<SearchBar<T>>
                   child: AnimatedOpacity(
                     opacity: _animate ? 1.0 : 0,
                     curve: Curves.easeIn,
-                    duration: Duration(milliseconds: _animate ? 1000 : 0),
+                    duration: Duration(milliseconds: 500),
                     child: AnimatedContainer(
                       duration: Duration(milliseconds: 200),
                       width:
-                          _animate ? MediaQuery.of(context).size.width * .2 : 0,
+                          _animate ? MediaQuery.of(context).size.width * .15 : 0,
                       child: Container(
                         color: Colors.transparent,
                         child: Center(
-                          child: widget.cancellationWidget,
+                          child: Padding(
+                            padding: const EdgeInsets.fromLTRB(10.0, 0.0, 0.0, 0.0),
+                            child:widget.cancellationWidget,
+                          ),
                         ),
                       ),
                     ),
