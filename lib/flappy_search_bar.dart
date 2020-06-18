@@ -271,12 +271,11 @@ class _SearchBarState<T> extends State<SearchBar<T>>
     super.initState();
     searchBarController =
         widget.searchBarController ?? SearchBarController<T>();
+    _searchQueryController =
+        widget.textEditingController ?? TextEditingController();
     searchBarController.setListener(this);
     searchBarController.setTextController(
         _searchQueryController, widget.minimumChars);
-
-    _searchQueryController =
-        widget.textEditingController ?? TextEditingController();
   }
 
   @override
