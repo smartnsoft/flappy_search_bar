@@ -1,6 +1,6 @@
 flappy_search_bar_fork
 ==============================
-This project forked flappy_search_bar 
+This is fork of flappy_search_bar
 ----------------------------------------
 A SearchBar widget handling most of search cases.
 
