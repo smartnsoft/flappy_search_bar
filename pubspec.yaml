@@ -1,7 +1,7 @@
-name: flappy_search_bar
+name: flappy_search_bar_fork
 description: A SearchBar widget automatizing most of your asynchronous searchs cases.
 version: 1.7.2
-homepage: https://github.com/smartnsoft/flappy_search_bar
+homepage: https://github.com/cyc2303/flappy_search_bar_fork
 
 environment:
   sdk: ">=2.1.0 <3.0.0"

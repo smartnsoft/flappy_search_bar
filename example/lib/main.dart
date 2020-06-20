@@ -1,7 +1,7 @@
 import 'dart:math';
 
-import 'package:flappy_search_bar/flappy_search_bar.dart';
-import 'package:flappy_search_bar/scaled_tile.dart';
+import 'package:flappy_search_bar_fork/flappy_search_bar.dart';
+import 'package:flappy_search_bar_fork/scaled_tile.dart';
 import 'package:flutter/material.dart';
 
 void main() => runApp(MyApp());
