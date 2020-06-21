@@ -31,6 +31,8 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   final SearchBarController<Post> _searchBarController = SearchBarController();
   bool isReplay = false;
+  Random random = Random();
+  double cancellationWidgetWidth;
 
   Future<List<Post>> _getALlPosts(String text) async {
     await Future.delayed(Duration(seconds: text.length == 4 ? 10 : 1));
@@ -58,12 +60,13 @@ class _HomeState extends State<Home> {
           searchBarController: _searchBarController,
           placeHolder: Text("placeholder"),
           cancellationWidget: Text("Cancel"),
+          cancellationWidgetWidth: cancellationWidgetWidth,
           emptyWidget: Text("empty"),
           indexedScaledTileBuilder: (int index) => ScaledTile.count(1, index.isEven ? 2 : 1),
           header: Row(
             children: <Widget>[
               RaisedButton(
-                child: Text("sort"),
+                child: Text("Sort"),
                 onPressed: () {
                   _searchBarController.sortList((Post a, Post b) {
                     return a.body.compareTo(b.body);
@@ -83,6 +86,13 @@ class _HomeState extends State<Home> {
                   _searchBarController.replayLastSearch();
                 },
               ),
+              RaisedButton(
+                child: Text("Random"),
+                onPressed: () {
+                  cancellationWidgetWidth = random.nextInt(250) + 50.0;
+                  setState(() {});
+                }
+              )
             ],
           ),
           onCancelled: () {
