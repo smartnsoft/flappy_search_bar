@@ -178,6 +178,9 @@ class SearchBar<T> extends StatefulWidget {
   /// Widget shown for cancellation
   final Widget cancellationWidget;
 
+  /// Width of cancellationWidget;
+  final double cancellationWidgetWidth;
+
   /// Callback when cancel button is triggered
   final VoidCallback onCancelled;
 
@@ -233,6 +236,7 @@ class SearchBar<T> extends StatefulWidget {
     this.iconActiveColor = Colors.black,
     this.textStyle = const TextStyle(color: Colors.black),
     this.cancellationWidget = const Text("Cancel"),
+    this.cancellationWidgetWidth,
     this.onCancelled,
     this.suggestions = const [],
     this.buildSuggestion,
@@ -387,7 +391,11 @@ class _SearchBarState<T> extends State<SearchBar<T>>
                 Flexible(
                   child: AnimatedContainer(
                     duration: Duration(milliseconds: 200),
-                    width: _animate ? widthMax * .8 : widthMax,
+                    width: _animate
+                        ? widget.cancellationWidgetWidth != null
+                          ? widthMax - widget.cancellationWidgetWidth
+                          : widthMax * .85
+                        : widthMax,
                     decoration: BoxDecoration(
                       borderRadius: widget.searchBarStyle.borderRadius,
                       color: widget.searchBarStyle.backgroundColor,
@@ -421,8 +429,11 @@ class _SearchBarState<T> extends State<SearchBar<T>>
                     duration: Duration(milliseconds: _animate ? 1000 : 0),
                     child: AnimatedContainer(
                       duration: Duration(milliseconds: 200),
-                      width:
-                          _animate ? MediaQuery.of(context).size.width * .2 : 0,
+                      width:_animate
+                          ? widget.cancellationWidgetWidth != null
+                            ? widget.cancellationWidgetWidth
+                            : MediaQuery.of(context).size.width * .15
+                          : 0,
                       child: Container(
                         color: Colors.transparent,
                         child: Center(
