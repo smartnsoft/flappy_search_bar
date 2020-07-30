@@ -31,7 +31,8 @@ class SearchBarController<T> {
   CancelableOperation _cancelableOperation;
   int minimumChars;
 
-  void setTextController(TextEditingController _searchQueryController, minimunChars) {
+  void setTextController(
+      TextEditingController _searchQueryController, minimunChars) {
     this._searchQueryController = _searchQueryController;
     this.minimumChars = minimunChars;
   }
@@ -215,6 +216,9 @@ class SearchBar<T> extends StatefulWidget {
   /// Set a padding on the list
   final EdgeInsetsGeometry listPadding;
 
+  /// Define if search bar should be focused as soon as it is visible
+  final bool autoFocus;
+
   SearchBar({
     Key key,
     @required this.onSearch,
@@ -246,6 +250,7 @@ class SearchBar<T> extends StatefulWidget {
     this.listPadding = const EdgeInsets.all(0),
     this.searchBarPadding = const EdgeInsets.all(0),
     this.headerPadding = const EdgeInsets.all(0),
+    this.autoFocus = false,
   }) : super(key: key);
 
   @override
@@ -268,7 +273,8 @@ class _SearchBarState<T> extends State<SearchBar<T>>
     searchBarController =
         widget.searchBarController ?? SearchBarController<T>();
     searchBarController.setListener(this);
-    searchBarController.setTextController(_searchQueryController, widget.minimumChars);
+    searchBarController.setTextController(
+        _searchQueryController, widget.minimumChars);
   }
 
   @override
@@ -398,6 +404,7 @@ class _SearchBarState<T> extends State<SearchBar<T>>
                         child: TextField(
                           controller: _searchQueryController,
                           onChanged: _onTextChanged,
+                          autofocus: widget.autoFocus,
                           style: widget.textStyle,
                           decoration: InputDecoration(
                             icon: widget.icon,
