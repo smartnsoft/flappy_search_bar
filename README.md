@@ -91,7 +91,7 @@ If you don't use an instance of SearchBarController, you can keep everything in 
 | ------------- | ------------- | ------------- | ------------- | ------------- |
 | onSearch   | Future<List<T>> Function(String text) | Callback giving you the text to look for and asking for a Future  | yes  | - |
 | onItemFound| Widget Function(T item, int index) | Callback letting you build the widget corresponding to each item| yes| - |
-| suggestions  |  List<T> | Potential fist list of suggestions (when no request have been made)  | no| [] |
+| suggestions  |  List<T> | Potential first list of suggestions (when no request have been made)  | no| [] |
 | searchBarController  |  SearchBarController | Enable you to sort and filter your list  | no | default controller |
 | searchBarStyle  |  SearchBarStyle | Syle to customize SearchBar  | no | default values on bottom tab |
 | buildSuggestions| Widget Function(T item, int index) | Callback called to let you build Suggestion item (if not provided, the suggestion will have the same layout as the basic item)  | no| null|
