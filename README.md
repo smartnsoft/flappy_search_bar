@@ -8,7 +8,7 @@ To use this plugin, add flappy_search_bar as a dependency in your pubspec.yaml f
 
 ### Example
 
-```
+```dart
 @override
   Widget build(BuildContext context) {
     return Scaffold(
