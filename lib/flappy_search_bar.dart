@@ -31,7 +31,8 @@ class SearchBarController<T> {
   CancelableOperation _cancelableOperation;
   int minimumChars;
 
-  void setTextController(TextEditingController _searchQueryController, minimunChars) {
+  void setTextController(
+      TextEditingController _searchQueryController, minimunChars) {
     this._searchQueryController = _searchQueryController;
     this.minimumChars = minimunChars;
   }
@@ -215,38 +216,41 @@ class SearchBar<T> extends StatefulWidget {
   /// Set a padding on the list
   final EdgeInsetsGeometry listPadding;
 
-  SearchBar({
-    Key key,
-    @required this.onSearch,
-    @required this.onItemFound,
-    this.searchBarController,
-    this.minimumChars = 3,
-    this.debounceDuration = const Duration(milliseconds: 500),
-    this.loader = const Center(child: CircularProgressIndicator()),
-    this.onError,
-    this.emptyWidget = const SizedBox.shrink(),
-    this.header,
-    this.placeHolder,
-    this.icon = const Icon(Icons.search),
-    this.hintText = "",
-    this.hintStyle = const TextStyle(color: Color.fromRGBO(142, 142, 147, 1)),
-    this.iconActiveColor = Colors.black,
-    this.textStyle = const TextStyle(color: Colors.black),
-    this.cancellationWidget = const Text("Cancel"),
-    this.onCancelled,
-    this.suggestions = const [],
-    this.buildSuggestion,
-    this.searchBarStyle = const SearchBarStyle(),
-    this.crossAxisCount = 1,
-    this.shrinkWrap = false,
-    this.indexedScaledTileBuilder,
-    this.scrollDirection = Axis.vertical,
-    this.mainAxisSpacing = 0.0,
-    this.crossAxisSpacing = 0.0,
-    this.listPadding = const EdgeInsets.all(0),
-    this.searchBarPadding = const EdgeInsets.all(0),
-    this.headerPadding = const EdgeInsets.all(0),
-  }) : super(key: key);
+  final TextEditingController textEditingController;
+
+  SearchBar(
+      {Key key,
+      @required this.onSearch,
+      @required this.onItemFound,
+      this.searchBarController,
+      this.minimumChars = 3,
+      this.debounceDuration = const Duration(milliseconds: 500),
+      this.loader = const Center(child: CircularProgressIndicator()),
+      this.onError,
+      this.emptyWidget = const SizedBox.shrink(),
+      this.header,
+      this.placeHolder,
+      this.icon = const Icon(Icons.search),
+      this.hintText = "",
+      this.hintStyle = const TextStyle(color: Color.fromRGBO(142, 142, 147, 1)),
+      this.iconActiveColor = Colors.black,
+      this.textStyle = const TextStyle(color: Colors.black),
+      this.cancellationWidget = const Text("Cancel"),
+      this.onCancelled,
+      this.suggestions = const [],
+      this.buildSuggestion,
+      this.searchBarStyle = const SearchBarStyle(),
+      this.crossAxisCount = 1,
+      this.shrinkWrap = false,
+      this.indexedScaledTileBuilder,
+      this.scrollDirection = Axis.vertical,
+      this.mainAxisSpacing = 0.0,
+      this.crossAxisSpacing = 0.0,
+      this.listPadding = const EdgeInsets.all(0),
+      this.searchBarPadding = const EdgeInsets.all(0),
+      this.headerPadding = const EdgeInsets.all(0),
+      this.textEditingController})
+      : super(key: key);
 
   @override
   _SearchBarState createState() => _SearchBarState<T>();
@@ -256,7 +260,7 @@ class _SearchBarState<T> extends State<SearchBar<T>>
     with TickerProviderStateMixin, _ControllerListener<T> {
   bool _loading = false;
   Widget _error;
-  final _searchQueryController = TextEditingController();
+  TextEditingController _searchQueryController;
   Timer _debounce;
   bool _animate = false;
   List<T> _list = [];
@@ -267,8 +271,11 @@ class _SearchBarState<T> extends State<SearchBar<T>>
     super.initState();
     searchBarController =
         widget.searchBarController ?? SearchBarController<T>();
+    _searchQueryController =
+        widget.textEditingController ?? TextEditingController();
     searchBarController.setListener(this);
-    searchBarController.setTextController(_searchQueryController, widget.minimumChars);
+    searchBarController.setTextController(
+        _searchQueryController, widget.minimumChars);
   }
 
   @override
