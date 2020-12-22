@@ -249,7 +249,7 @@ class SearchBar<T> extends StatefulWidget {
     this.listPadding = const EdgeInsets.all(0),
     this.searchBarPadding = const EdgeInsets.all(0),
     this.headerPadding = const EdgeInsets.all(0),
-	this.autofocus = false,
+    this.autofocus = false,
   }) : super(key: key);
 
   @override
@@ -400,7 +400,7 @@ class _SearchBarState<T> extends State<SearchBar<T>>
                       padding: widget.searchBarStyle.padding,
                       child: Theme(
                         child: TextField(
-						  autofocus: widget.autofocus,
+                          autofocus: widget.autofocus,
                           controller: _searchQueryController,
                           onChanged: _onTextChanged,
                           style: widget.textStyle,
