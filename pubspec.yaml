@@ -1,6 +1,6 @@
 name: flappy_search_bar
 description: A SearchBar widget automatizing most of your asynchronous searchs cases.
-version: 1.7.2
+version: 1.7.2-dev1
 homepage: https://github.com/smartnsoft/flappy_search_bar
 
 environment:
