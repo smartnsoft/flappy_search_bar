@@ -28,7 +28,7 @@ class SearchBarController<T> {
   Future<List<T>> Function(String? text)? _lastSearchFunction;
   _ControllerListener? _controllerListener;
   int Function(T a, T b)? _lastSorting;
-  CancelableOperation? _cancelableOperation;
+  CancelableOperation<List<T>>? _cancelableOperation;
   late int minimumChars;
 
   void setTextController(TextEditingController _searchQueryController, minimunChars) {
@@ -58,7 +58,8 @@ class SearchBarController<T> {
         onCancel: () => {},
       );
 
-      final List<T> items = await (_cancelableOperation!.value as FutureOr<List<T>>);
+
+      final List<T> items = await (_cancelableOperation!.value);
       _lastSearchFunction = onSearch;
       _lastSearchedText = text;
       _list.clear();

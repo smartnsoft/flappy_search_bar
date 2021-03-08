@@ -33,7 +33,6 @@ class _HomeState extends State<Home> {
   bool isReplay = false;
 
   Future<List<Post>> _getALlPosts(String text) async {
-    print("O texto é igual a $text");
     await Future.delayed(Duration(seconds: text.length == 4 ? 10 : 1));
     if (isReplay) return [Post("Replaying !", "Replaying body")];
     if (text.length == 5) throw Error();
@@ -44,7 +43,6 @@ class _HomeState extends State<Home> {
     for (int i = 0; i < 10; i++) {
       posts.add(Post("$text $i", "body random number : ${random.nextInt(100)}"));
     }
-    print("passou aqui!");
     return posts;
   }
 
