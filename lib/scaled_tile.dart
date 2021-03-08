@@ -27,5 +27,5 @@ class ScaledTile extends StaggeredTile {
   ScaledTile.count(
     int crossAxisCellCount,
     num mainAxisCellCount,
-  ) : super.count(crossAxisCellCount, mainAxisCellCount);
+  ) : super.count(crossAxisCellCount, mainAxisCellCount as double?);
 }
